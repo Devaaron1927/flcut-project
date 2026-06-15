@@ -35,4 +35,3 @@
   "postinstall": "prisma generate"
 },
   }
-}
