@@ -1,0 +1,31 @@
+datasource db {
+  provider = "postgresql"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Link {
+  id          String    @id @default(cuid())
+  shortCode   String    @unique
+  originalUrl String
+  createdAt   DateTime  @default(now())
+  expiresAt   DateTime? //
+  clicksCount Int       @default(0)     //
+  maxClicks   Int?      
+  isLocked    Boolean   @default(false) // <-- ADD THIS LINE: Explicit manual lock override
+  analytics   Analytics[]
+}
+
+model Analytics {
+  id        String   @id @default(cuid())
+  linkId    String
+  link      Link     @relation(fields: [linkId], references: [id], onDelete: Cascade)
+  clickedAt DateTime @default(now())
+  
+  // Smart analytics points requested by FLC
+  ipAddress String             // Used for unique click identification
+  referrer  String?            // Where they came from (WhatsApp, Instagram, etc.)
+  device    String?            // Desktop, Mobile, etc.
+}
